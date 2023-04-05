@@ -6,11 +6,11 @@ namespace bluedom_be.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class BluedomController : ControllerBase
+public class PlayerController : ControllerBase
 {
     private readonly PlayerService _playerService;
 
-    public BluedomController(PlayerService playerService)
+    public PlayerController(PlayerService playerService)
     {
         _playerService = playerService;
     }
@@ -34,12 +34,12 @@ public class BluedomController : ControllerBase
         return player;
     }
 
-    [HttpPost]
-    public async Task<IActionResult> Post(Player newPlayer)
-    {
-        await _playerService.CreateAsync(newPlayer);
-        return CreatedAtAction(nameof(Get), new { id = newPlayer.Id }, newPlayer);
-    }
+    // [HttpPost]
+    // public async Task<IActionResult> Post(Player newPlayer)
+    // {
+    //     await _playerService.CreateAsync(newPlayer);
+    //     return CreatedAtAction(nameof(Get), new { id = newPlayer.Id }, newPlayer);
+    // }
 
     [HttpPut("{id:length(24)}")]
     public async Task<IActionResult> Update(string id, Player updatedPlayer)
