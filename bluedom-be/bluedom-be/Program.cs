@@ -1,7 +1,17 @@
 using bluedom_be.Models;
 using bluedom_be.Services;
+using MongoDB.Bson;
+using MongoDB.Bson.Serialization.Conventions;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Set up MongoDB conventions
+var pack = new ConventionPack
+{
+    new EnumRepresentationConvention(BsonType.String)
+};
+
+ConventionRegistry.Register("EnumStringConvention", pack, t => true);
 
 // Add services to the container.
 builder.Services.Configure<BluedomStoreDatabaseSettings>(builder.Configuration.GetSection("BluedomStoreDatabase"));

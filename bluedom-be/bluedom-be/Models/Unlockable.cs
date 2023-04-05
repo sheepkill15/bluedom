@@ -5,11 +5,8 @@ namespace bluedom_be.Models;
 
 public enum UnlockableType
 {
-    [BsonRepresentation(BsonType.String)]
     Background,
-    [BsonRepresentation(BsonType.String)]
     Font,
-    [BsonRepresentation(BsonType.String)]
     Effect
 }
 
