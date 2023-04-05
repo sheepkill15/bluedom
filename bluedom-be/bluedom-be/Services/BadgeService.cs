@@ -26,6 +26,10 @@ public class BadgeService
     public async Task<Badge?> GetAsync(string id) =>
         await _badgesCollection.Find(x => x.Id == id).FirstOrDefaultAsync();
 
+    public async Task<List<string>> GetCompletedIds(int tokens, int quests) =>
+        await _badgesCollection.Find(x => x.RequiredTokens <= tokens && x.RequiredQuests <= quests).Project(x => x.Id)
+            .ToListAsync();
+
     public async Task CreateAsync(Badge newBadge) =>
         await _badgesCollection.InsertOneAsync(newBadge);
 
