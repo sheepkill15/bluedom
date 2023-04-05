@@ -18,6 +18,10 @@ public class UserService
 
         _usersCollection = mongoDatabase.GetCollection<User>(
             bluedomStoreDatabaseSettings.Value.UsersCollectionName);
+
+        _usersCollection.Indexes.CreateOne(new CreateIndexModel<User>(Builders<User>.IndexKeys.Ascending("Username"),
+            new CreateIndexOptions { Unique = true }));
+
     }
     
     public async Task<User?> GetAsync(string id) =>
