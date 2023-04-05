@@ -26,6 +26,13 @@ public class PlayerService
     public async Task<Player?> GetAsync(string id) =>
         await _playersCollection.Find(x => x.Id == id).FirstOrDefaultAsync();
 
+    public async Task<List<Player>> GetTop(int count) =>
+        await _playersCollection.Find(_ => true).SortByDescending(player => player.Tokens + player.Quests).Limit(count)
+            .ToListAsync();
+
+    public async Task<long> GetBetterCount(int tokens, int quests) =>
+        await _playersCollection.CountDocumentsAsync(x => x.Tokens + x.Quests > tokens + quests);
+    
     public async Task CreateAsync(Player newPlayer) =>
         await _playersCollection.InsertOneAsync(newPlayer);
 
