@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 
@@ -15,22 +15,31 @@ export type FormProps = {
 };
 
 const AutoForm = (props: FormProps) => {
-    const formData: {[id: string]: string} = {};
+    const [formData, setFormData] = useState<{[id: string]: string}>({});
+
+    const onChangeInput = (name: string, inputValue: string) => {
+        setFormData({...formData, [name]: inputValue});
+    }
 
     return (
-        <Form style={{textAlign: 'start'}} onSubmit={() => props.onSubmit(formData)}>
+        <Form onSubmit={(e) => {
+            e.preventDefault();
+            props.onSubmit(formData);
+        }}>
             {
                 props.inputs.map((input) => {
                     return (
-                        <Form.Group controlId={`formBasic${input.name}`}>
+                        <Form.Group style={{textAlign: 'start', paddingTop: '1em'}}
+                        key={input.name} controlId={`formBasic${input.name}`}>
                             <Form.Label>{input.placeholder}</Form.Label>
-                            <Form.Control onChange={(e) => formData[input.name] = e.target.value} 
+                            <Form.Control required 
+                                onChange={(e) => onChangeInput(input.name, e.target.value)} 
                                 type={input.type} placeholder={input.placeholder}/>
                         </Form.Group>
                     );
                 })
             }
-            <Button variant="primary" type="submit">{props.action}</Button>
+            <Button style={{margin: '1em'}} variant="primary" type="submit">{props.action}</Button>
         </Form>
     );
 }
