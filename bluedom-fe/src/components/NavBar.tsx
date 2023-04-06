@@ -1,10 +1,22 @@
-import React from "react";
+import React, { useContext } from "react";
 import Navbar from 'react-bootstrap/Navbar';
 import Container from 'react-bootstrap/Container';
 import Nav from 'react-bootstrap/Nav';
+import Button from 'react-bootstrap/Button';
 import { NavLink } from "react-router-dom";
+import { UserContext } from "../User";
 
 const NavBar = () => {
+    const userContext = useContext(UserContext);
+
+    const logout = () => {
+        userContext.setUser({
+            loggedIn: false,
+            username: '',
+            playerId: ''
+        });
+    }
+
     return (
         <Navbar bg="dark" expand="sm" variant="dark">
             <Container>
@@ -16,9 +28,10 @@ const NavBar = () => {
                         <Nav.Link as={NavLink} to="leaderboard">Leaderboard</Nav.Link>
                         <Nav.Link as={NavLink} to="shop">Shop</Nav.Link>
                     </Nav>
-                    <Nav className="justify-content-end">
-                        <Nav.Link as={NavLink} to="login">Login</Nav.Link>
-                    </Nav>
+                    {userContext.user.loggedIn && <Nav className="justify-content-end">
+                        <Navbar.Text>{userContext.user.username}</Navbar.Text> 
+                        <Nav.Link as={Button} variant="link" onClick={logout}>Logout</Nav.Link>
+                    </Nav>}
                 </Navbar.Collapse>
             </Container>
         </Navbar>
