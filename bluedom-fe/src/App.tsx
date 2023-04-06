@@ -3,6 +3,7 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import Home from './pages/Home';
 import Leaderboards from './pages/Leaderboards';
 import Root from './pages/Root';
+import Shop from './pages/Shop';
 
 const router = createBrowserRouter([
   {
@@ -16,6 +17,10 @@ const router = createBrowserRouter([
       {
         path: 'leaderboards',
         element: <Leaderboards />,
+      },
+      {
+        path: 'shop',
+        element: <Shop />,
       },
     ],
   },
