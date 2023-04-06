@@ -2,6 +2,7 @@ import React from 'react';
 import Card from 'react-bootstrap/Card';
 
 export type Player = {
+  id: string;
   name: string;
   quests: number;
   tokens: number;
