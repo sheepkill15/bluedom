@@ -49,7 +49,8 @@ public class UserController : ControllerBase
         {
             return ValidationProblem("Bad password");
         }
-        return CreatedAtAction(nameof(Get), new { id = user.Id }, user);
+        var mapper = new UserMapper();
+        return CreatedAtAction(nameof(Get), new { id = user.Id }, mapper.UserToUserDto(user));
     }
     
     [HttpPost]
@@ -72,6 +73,7 @@ public class UserController : ControllerBase
         await _playerService.CreateAsync(newPlayer);
         newUser.PlayerId = newPlayer.Id;
         await _userService.UpdateAsync(newUser.Id!, newUser);
-        return CreatedAtAction(nameof(Get), new { id = newUser.Id }, newUser);
+        var mapper = new UserMapper();
+        return CreatedAtAction(nameof(Get), new { id = newUser.Id }, mapper.UserToUserDto(newUser));
     }
 }
