@@ -1,13 +1,13 @@
 import React, { useState, useEffect, useContext } from 'react';
-import Table from 'react-bootstrap/Table';
+import { useNavigate } from 'react-router-dom';
 import Container from 'react-bootstrap/Container';
-import { API_BASEURL, sendGetRequest } from '../Api';
-import QuestItem, { Quest } from '../components/Quest';
+import Table from 'react-bootstrap/Table';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
+import { API_BASEURL, sendGetRequest } from '../Api';
+import QuestItem, { Quest } from '../components/Quest';
 import PlayerStats, { Player } from '../components/PlayerStats';
 import { UserContext } from '../User';
-import Play from './Play';
 
 const Home = () => {
   const userContext = useContext(UserContext);
@@ -15,8 +15,6 @@ const Home = () => {
   const [quests, setQuests] = useState<Quest[]>([]);
 
   const [currentPlayer, setCurrentPlayer] = useState<Player | null>(null);
-
-  const [playingQuest, setPlayingQuest] = useState<Quest | null>(null);
 
   const fetchAllQuests = () => {
     sendGetRequest(`${API_BASEURL}/Quest`)
@@ -32,16 +30,16 @@ const Home = () => {
       .catch(console.log);
   };
 
-  const finishQuest = (success: boolean, quest: Quest) => {
-    setPlayingQuest(null);
-  };
-
   useEffect(fetchAllQuests, []);
   useEffect(fetchUserAssociatedPlayer, [userContext.user]);
 
-  return playingQuest ? (
-    <Play onFinished={finishQuest} quest={playingQuest} />
-  ) : (
+  const navigate = useNavigate();
+
+  const playQuest = (quest: Quest) => {
+    navigate(`/quest/${quest.id}`);
+  };
+
+  return (
     <Container>
       <Row>
         <Col>
@@ -58,11 +56,7 @@ const Home = () => {
             </thead>
             <tbody>
               {quests.map((quest) => (
-                <QuestItem
-                  key={quest.id}
-                  quest={quest}
-                  onAttempt={setPlayingQuest}
-                />
+                <QuestItem key={quest.id} quest={quest} onAttempt={playQuest} />
               ))}
             </tbody>
           </Table>

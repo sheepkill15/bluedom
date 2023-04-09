@@ -9,6 +9,7 @@ import { Quest } from '../components/Quest';
 import '../styles/Play.css';
 import { UserContext } from '../User';
 import { Unlockable, UnlockableTypes } from './Shop';
+import { Params, useLoaderData } from 'react-router-dom';
 
 const SPACE_CODE = 'Space';
 const BACKSPACE_CODE = 'Backspace';
@@ -146,13 +147,17 @@ const QuestSetup = ({
   return (
     <Container style={{ marginTop: '2rem' }}>
       <Form
-        onSubmit={(e) => {
+        onSubmit={(e: { preventDefault: () => void }) => {
           e.preventDefault();
           onStart(selections);
         }}
       >
         {selectTypes.map((type, i) => (
-          <Form.Group style={{ marginTop: '2rem' }} controlId={`select${type}`}>
+          <Form.Group
+            key={i}
+            style={{ marginTop: '2rem' }}
+            controlId={`select${type}`}
+          >
             <Form.Label>Choose a {type}</Form.Label>
             <Form.Select
               onChange={(e) => handleSelectChanged(type, e.target.value)}
@@ -175,7 +180,7 @@ const QuestResults = ({
   onContinue,
 }: {
   success: boolean;
-  onContinue: () => void;
+  onContinue: (success: boolean) => void;
 }) => {
   return (
     <Container style={{ textAlign: 'center', marginTop: '2rem' }}>
@@ -184,21 +189,27 @@ const QuestResults = ({
       ) : (
         <h2>Sorry, you didn't quite get it this time.</h2>
       )}
-      <Button onClick={onContinue} variant={success ? 'success' : 'danger'}>
+      <Button
+        onClick={() => onContinue(success)}
+        variant={success ? 'success' : 'danger'}
+      >
         {success ? 'Claim rewards' : 'Go back home'}
       </Button>
     </Container>
   );
 };
 
-const Play = ({
-  quest,
-  onFinished,
-}: {
-  quest: Quest;
-  onFinished: (s: boolean, q: Quest) => void;
-}) => {
-  const [remainingTime, setRemainingTime] = useState(quest.requiredTime);
+export async function questLoader({ params }: { params: Params }) {
+  const quest = (await sendGetRequest(`${API_BASEURL}/Quest/${params.questId}`)
+    .then((res) => res.json())
+    .catch(console.log)) as Quest;
+  return { quest };
+}
+
+const Play = () => {
+  const { quest } = useLoaderData() as { quest: Quest | null };
+
+  const [remainingTime, setRemainingTime] = useState(quest?.requiredTime ?? 0);
 
   const [started, setStarted] = useState(false);
 
@@ -207,6 +218,8 @@ const Play = ({
   const handleStart = (selection: Selection) => {
     setStarted(true);
   };
+
+  const onQuestFinished = (success: boolean) => {};
 
   useEffect(() => {
     let updateSeconds: NodeJS.Timer | null = null;
@@ -233,6 +246,14 @@ const Play = ({
     };
   }, [started, remainingTime]);
 
+  if (!quest) {
+    return (
+      <Container>
+        <h2>This quest was not found.</h2>
+      </Container>
+    );
+  }
+
   return (
     <Container style={{ position: 'relative' }}>
       <div className="quest-top-bar">
@@ -240,10 +261,7 @@ const Play = ({
         <b>Remaining time: {remainingTime} seconds</b>
       </div>
       {finished !== null ? (
-        <QuestResults
-          onContinue={() => onFinished(finished, quest)}
-          success={finished}
-        />
+        <QuestResults onContinue={onQuestFinished} success={finished} />
       ) : started ? (
         <TypeRacer onFinished={() => setFinished(true)} quest={quest} />
       ) : (
