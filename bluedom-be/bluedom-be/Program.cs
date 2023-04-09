@@ -13,6 +13,19 @@ var pack = new ConventionPack
 
 ConventionRegistry.Register("EnumStringConvention", pack, t => true);
 
+const string allowAllOrigins = "_allowAllOrigins";
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(name: allowAllOrigins,
+        policy  =>
+        {
+            policy.AllowAnyOrigin()
+                .AllowAnyHeader()
+                .AllowAnyMethod();
+        });
+});
+
+
 // Add services to the container.
 builder.Services.Configure<BluedomStoreDatabaseSettings>(builder.Configuration.GetSection("BluedomStoreDatabase"));
 
@@ -34,6 +47,7 @@ if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
+    app.UseCors(allowAllOrigins);
 }
 
 app.UseHttpsRedirection();
