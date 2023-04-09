@@ -110,7 +110,7 @@ const QuestSetup = ({
       const player = (await response.json()) as Player;
 
       const fetches: Promise<Unlockable>[] = [];
-      for (const unlockable of player.purchases) {
+      for (const unlockable of player.purchases ?? []) {
         fetches.push(
           sendGetRequest(`${API_BASEURL}/Unlockable/${unlockable}`).then(
             (res) => res.json()
