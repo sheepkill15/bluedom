@@ -2,14 +2,14 @@ import React, { useState, useRef, useEffect, useContext } from 'react';
 import Container from 'react-bootstrap/Container';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
-import { API_BASEURL, sendGetRequest } from '../Api';
+import { API_BASEURL, sendGetRequest, sendPostRequest } from '../Api';
 import { Player } from '../components/PlayerStats';
 import { Quest } from '../components/Quest';
 
 import '../styles/Play.css';
 import { UserContext } from '../User';
 import { Unlockable, UnlockableTypes } from './Shop';
-import { Params, useLoaderData } from 'react-router-dom';
+import { Params, useLoaderData, useNavigate } from 'react-router-dom';
 
 const SPACE_CODE = 'Space';
 const BACKSPACE_CODE = 'Backspace';
@@ -215,11 +215,24 @@ const Play = () => {
 
   const [finished, setFinished] = useState<boolean | null>(null);
 
+  const userContext = useContext(UserContext);
+
+  const navigate = useNavigate();
+
   const handleStart = (selection: Selection) => {
     setStarted(true);
   };
 
-  const onQuestFinished = (success: boolean) => {};
+  const onQuestFinished = async (success: boolean) => {
+    if (success) {
+      await sendPostRequest(
+        `${API_BASEURL}/Quest/completed/${quest?.id}`,
+        {},
+        { playerId: userContext.user.playerId }
+      ).catch(console.log);
+    }
+    navigate('/home');
+  };
 
   useEffect(() => {
     let updateSeconds: NodeJS.Timer | null = null;
