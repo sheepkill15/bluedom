@@ -6,13 +6,13 @@ import Card from 'react-bootstrap/Card';
 import Button from 'react-bootstrap/Button';
 import { API_BASEURL, sendGetRequest } from '../Api';
 
-enum UnlockableTypes {
+export enum UnlockableTypes {
   BACKGROUND = 0,
   FONT = 1,
   EFFECT = 2,
 }
 
-type Unlockable = {
+export type Unlockable = {
   id: string;
   name: string;
   type: UnlockableTypes;

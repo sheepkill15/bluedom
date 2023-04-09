@@ -7,6 +7,7 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import PlayerStats, { Player } from '../components/PlayerStats';
 import { UserContext } from '../User';
+import Play from './Play';
 
 const Home = () => {
   const userContext = useContext(UserContext);
@@ -15,25 +16,33 @@ const Home = () => {
 
   const [currentPlayer, setCurrentPlayer] = useState<Player | null>(null);
 
+  const [playingQuest, setPlayingQuest] = useState<Quest | null>(null);
+
   const fetchAllQuests = () => {
-    sendGetRequest(`${API_BASEURL}/Quest`, {})
+    sendGetRequest(`${API_BASEURL}/Quest`)
       .then((res) => res.json())
       .then(setQuests)
       .catch(console.log);
   };
 
   const fetchUserAssociatedPlayer = () => {
-    sendGetRequest(`${API_BASEURL}/Player/${userContext.user.playerId}`, {})
+    sendGetRequest(`${API_BASEURL}/Player/${userContext.user.playerId}`)
       .then((res) => res.json())
       .then(setCurrentPlayer)
       .catch(console.log);
   };
 
+  const finishQuest = (success: boolean, quest: Quest) => {
+    setPlayingQuest(null);
+  };
+
   useEffect(fetchAllQuests, []);
   useEffect(fetchUserAssociatedPlayer, [userContext.user]);
 
-  return (
-    <Container style={{ marginTop: '2rem' }}>
+  return playingQuest ? (
+    <Play onFinished={finishQuest} quest={playingQuest} />
+  ) : (
+    <Container>
       <Row>
         <Col>
           <Table variant="dark">
@@ -49,7 +58,11 @@ const Home = () => {
             </thead>
             <tbody>
               {quests.map((quest) => (
-                <QuestItem quest={quest} />
+                <QuestItem
+                  key={quest.id}
+                  quest={quest}
+                  onAttempt={setPlayingQuest}
+                />
               ))}
             </tbody>
           </Table>
