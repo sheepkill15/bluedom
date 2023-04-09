@@ -69,13 +69,17 @@ const Shop = () => {
                 <Card.Title>{item.name}</Card.Title>
                 <Card.Text>{item.description}</Card.Text>
                 <Card.Text>Type: {unlockableTypeToString[item.type]}</Card.Text>
-                {ownItems.find((x) => x === item.id) ? (
-                  <Button variant="success">Already bought</Button>
-                ) : (
-                  <Button variant="danger" onClick={() => buyItem(item)}>
-                    Buy for {item.cost} tokens
-                  </Button>
-                )}
+                <Container style={{ textAlign: 'center' }}>
+                  {ownItems.find((x) => x === item.id) ? (
+                    <Button variant="success" disabled>
+                      Already bought
+                    </Button>
+                  ) : (
+                    <Button variant="danger" onClick={() => buyItem(item)}>
+                      Buy for {item.cost} tokens
+                    </Button>
+                  )}
+                </Container>
               </Card.Body>
             </Card>
           </Col>
