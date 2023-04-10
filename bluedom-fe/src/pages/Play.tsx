@@ -176,16 +176,30 @@ const QuestSetup = ({
 };
 
 const QuestResults = ({
+  quest,
+  remainingTime,
   success,
   onContinue,
 }: {
+  quest: Quest;
+  remainingTime: number;
   success: boolean;
   onContinue: (success: boolean) => void;
 }) => {
   return (
     <Container style={{ textAlign: 'center', marginTop: '2rem' }}>
       {success ? (
-        <h2>Congratulations, you've completed the quest!</h2>
+        <>
+          <h2>Congratulations, you've completed the quest!</h2>
+          <p>
+            {Math.floor(
+              (quest.text.length / 5 / (quest.requiredTime - remainingTime)) *
+                60
+            )}{' '}
+            WPM
+          </p>
+          <p>You've won {quest.reward} tokens</p>
+        </>
       ) : (
         <h2>Sorry, you didn't quite get it this time.</h2>
       )}
@@ -257,7 +271,7 @@ const Play = () => {
         clearInterval(updateSeconds);
       }
     };
-  }, [started, remainingTime]);
+  }, [started, remainingTime, finished]);
 
   if (!quest || quest.issuerId === userContext.user.playerId) {
     return (
@@ -274,7 +288,12 @@ const Play = () => {
         <b>Remaining time: {remainingTime} seconds</b>
       </div>
       {finished !== null ? (
-        <QuestResults onContinue={onQuestFinished} success={finished} />
+        <QuestResults
+          remainingTime={remainingTime}
+          quest={quest}
+          onContinue={onQuestFinished}
+          success={finished}
+        />
       ) : started ? (
         <TypeRacer onFinished={() => setFinished(true)} quest={quest} />
       ) : (
