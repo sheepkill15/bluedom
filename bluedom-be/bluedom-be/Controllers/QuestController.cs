@@ -36,6 +36,25 @@ public class QuestController : ControllerBase
 
         return quest;
     }
+
+    [HttpPost]
+    public async Task<IActionResult> CreateQuest(Quest newQuest)
+    {
+        var issuerPlayer = await _playerService.GetAsync(newQuest.IssuerId);
+        if (issuerPlayer is null)
+        {
+            return NotFound();
+        }
+        if (issuerPlayer.Tokens < newQuest.Reward)
+        {
+            return ValidationProblem("Player doesn't have enough tokens.");
+        }
+
+        issuerPlayer.Tokens -= newQuest.Reward;
+        await _playerService.UpdateAsync(newQuest.IssuerId, issuerPlayer);
+        await _questService.CreateAsync(newQuest);
+        return CreatedAtAction(nameof(Get), new { id = newQuest.Id }, newQuest);
+    }
     
     [HttpPost("completed/{questId:length(24)}")]
     public async Task<IActionResult> CompletedQuest(string questId, string playerId)
