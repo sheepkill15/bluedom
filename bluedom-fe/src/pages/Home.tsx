@@ -119,6 +119,9 @@ const Home = () => {
   };
 
   const onCreateQuest = (quest: Quest) => {
+    if ('status' in quest && (quest.status as number) >= 400) {
+      return;
+    }
     setQuests([...quests, quest]);
   };
 
