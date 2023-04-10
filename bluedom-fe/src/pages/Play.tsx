@@ -22,15 +22,19 @@ type Selection = {
 
 const TypeRacer = ({
   quest,
+  selection,
   onFinished,
 }: {
   quest: Quest;
+  selection: Selection;
   onFinished: () => void;
 }) => {
   const hiddenInputRef = useRef<HTMLTextAreaElement>(null);
   const typedTextRef = useRef<HTMLSpanElement>(null);
 
   const [typedText, setTypedText] = useState('');
+
+  const [selectedStyle, setSelectedStyle] = useState({});
 
   const handleInput = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     if (e.target.value === quest.text) {
@@ -69,9 +73,20 @@ const TypeRacer = ({
   };
 
   useEffect(focusHiddenInput, []);
+  useEffect(() => {
+    const backgroundStyle = JSON.parse(selection.background);
+    const fontStyle = JSON.parse(selection.font);
+
+    const selectionStyle = {
+      ...backgroundStyle,
+      ...fontStyle,
+    };
+
+    setSelectedStyle(selectionStyle);
+  }, [selection]);
 
   return (
-    <Container onClick={focusHiddenInput}>
+    <Container style={selectedStyle} onClick={focusHiddenInput}>
       <span ref={typedTextRef} className="quest-text">
         {typedText}
       </span>
@@ -98,9 +113,9 @@ const QuestSetup = ({
   const [unlockables, setUnlockables] = useState<Unlockable[]>([]);
 
   const [selections, setSelections] = useState<Selection>({
-    background: '',
-    font: '',
-    effect: '',
+    background: '{}',
+    font: '{}',
+    effect: '{}',
   });
 
   useEffect(() => {
@@ -225,7 +240,7 @@ const Play = () => {
 
   const [remainingTime, setRemainingTime] = useState(quest?.requiredTime ?? 0);
 
-  const [started, setStarted] = useState(false);
+  const [started, setStarted] = useState<Selection | null>(null);
 
   const [finished, setFinished] = useState<boolean | null>(null);
 
@@ -234,7 +249,7 @@ const Play = () => {
   const navigate = useNavigate();
 
   const handleStart = (selection: Selection) => {
-    setStarted(true);
+    setStarted(selection);
   };
 
   const onQuestFinished = async (success: boolean) => {
@@ -295,7 +310,11 @@ const Play = () => {
           success={finished}
         />
       ) : started ? (
-        <TypeRacer onFinished={() => setFinished(true)} quest={quest} />
+        <TypeRacer
+          selection={started}
+          onFinished={() => setFinished(true)}
+          quest={quest}
+        />
       ) : (
         <QuestSetup onStart={handleStart} />
       )}
