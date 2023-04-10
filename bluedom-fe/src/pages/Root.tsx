@@ -23,6 +23,7 @@ const Root = () => {
       <UserContext.Provider value={{ user, setUser }}>
         <NavBar />
         {user.loggedIn ? <Outlet /> : <Login />}
+        <div style={{ height: '1rem' }}></div>
       </UserContext.Provider>
     </div>
   );
