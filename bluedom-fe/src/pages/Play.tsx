@@ -259,7 +259,7 @@ const Play = () => {
     };
   }, [started, remainingTime]);
 
-  if (!quest) {
+  if (!quest || quest.issuerId === userContext.user.playerId) {
     return (
       <Container>
         <h2>This quest was not found.</h2>
