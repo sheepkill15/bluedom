@@ -278,6 +278,7 @@ const Play = () => {
         }
         if (remainingTime <= 0) {
           setFinished(false);
+          return;
         }
         setRemainingTime((time) => {
           return time - 1;
