@@ -1,15 +1,14 @@
 import React, { useState, useRef, useEffect, useContext } from 'react';
+import { Params, useLoaderData, useNavigate } from 'react-router-dom';
 import Container from 'react-bootstrap/Container';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import { API_BASEURL, sendGetRequest, sendPostRequest } from '../Api';
 import { Player } from '../components/PlayerStats';
 import { Quest } from '../components/Quest';
-
-import '../styles/Play.css';
 import { UserContext } from '../User';
 import { Unlockable, UnlockableTypes } from './Shop';
-import { Params, useLoaderData, useNavigate } from 'react-router-dom';
+import '../styles/Play.css';
 
 const SPACE_CODE = 'Space';
 const BACKSPACE_CODE = 'Backspace';
@@ -35,6 +34,7 @@ const TypeRacer = ({
   const [typedText, setTypedText] = useState('');
 
   const [selectedStyle, setSelectedStyle] = useState({});
+  const [effectStyle, setEffectStyle] = useState({});
 
   const handleInput = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     if (e.target.value === quest.text) {
@@ -76,6 +76,9 @@ const TypeRacer = ({
   useEffect(() => {
     const backgroundStyle = JSON.parse(selection.background);
     const fontStyle = JSON.parse(selection.font);
+    const effectStyle = JSON.parse(selection.effect);
+    console.log(effectStyle);
+    setEffectStyle(effectStyle);
 
     const selectionStyle = {
       ...backgroundStyle,
@@ -96,7 +99,7 @@ const TypeRacer = ({
         onChange={handleInput}
         className="hidden-input"
       />
-      <span className="quest-placeholder">
+      <span className="quest-placeholder" style={effectStyle}>
         {quest.text.substring(typedText.length)}
       </span>
     </Container>
