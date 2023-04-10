@@ -81,8 +81,14 @@ public class QuestController : ControllerBase
             await _playerService.UpdateAsync(quest.IssuerId, issuer);
             await _questService.RemoveAsync(questId);
         }
-
-        player.Badges = await _badgeService.GetCompletedIds(player.Tokens, player.Quests);
+        var badges = await _badgeService.GetCompletedIds(player.Tokens, player.Quests);
+        foreach(var badge in badges)
+        {
+            if (player.Badges.Find(x => x == badge) is null)
+            {
+                player.Badges.Add(badge);
+            }
+        }
         await _playerService.UpdateAsync(playerId, player);
         return CreatedAtAction(nameof(Get), new { id = playerId }, player);
     }
