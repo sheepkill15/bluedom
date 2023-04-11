@@ -11,6 +11,8 @@ const Leaderboards = () => {
 
   const [ownPosition, setOwnPosition] = useState(0);
 
+  const [currentPlayer, setCurrentPlayer] = useState<Player | null>(null);
+
   useEffect(() => {
     sendGetRequest(`${API_BASEURL}/Player/leaderboard`)
       .then((res) => res.json())
@@ -18,11 +20,15 @@ const Leaderboards = () => {
       .catch(console.log);
 
     sendGetRequest(
-      `${API_BASEURL}/Player/position/${userContext.user.playerId}`,
-      {}
+      `${API_BASEURL}/Player/position/${userContext.user.playerId}`
     )
       .then((res) => res.json())
       .then(setOwnPosition)
+      .catch(console.log);
+
+    sendGetRequest(`${API_BASEURL}/Player/${userContext.user.playerId}`)
+      .then((res) => res.json())
+      .then(setCurrentPlayer)
       .catch(console.log);
   }, [userContext.user]);
 
@@ -59,7 +65,9 @@ const Leaderboards = () => {
           {!topPlayers.find((p) => p.id === userContext.user.playerId) && (
             <tr>
               <td>{ownPosition}</td>
-              <td style={{ color: 'orange' }}>you</td>
+              <td style={{ color: 'orange' }}>{currentPlayer?.name}</td>
+              <td>{currentPlayer?.tokens}</td>
+              <td>{currentPlayer?.quests}</td>
             </tr>
           )}
         </tbody>
