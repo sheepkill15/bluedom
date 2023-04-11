@@ -15,6 +15,6 @@ public class Player
     
     public int Tokens { get; set; }
 
-    public List<string> Badges { get; set; } = null!;
-    public List<string> Purchases { get; set; } = null!;
+    public List<string>? Badges { get; set; } = null!;
+    public List<string>? Purchases { get; set; } = null!;
 }
