@@ -1,0 +1,63 @@
+body {
+  overflow-x: hidden;
+}
+
+.quest-top-bar {
+  position: sticky;
+  top: 0;
+  background-color: rgb(25, 25, 25);
+  z-index: 1;
+}
+
+.quest-placeholder {
+  /* position: absolute; */
+  margin: 0;
+  padding: 0;
+  opacity: 0.5;
+  font-size: 5em;
+  user-select: none;
+  font-family: monospace;
+  word-break: break-all;
+  white-space: pre-wrap;
+}
+
+.quest-text {
+  /* position: absolute; */
+  font-size: 5em;
+  user-select: none;
+  margin: 0;
+  padding: 0;
+  font-family: monospace;
+  word-break: break-all;
+  white-space: pre-wrap;
+}
+
+.quest-text::after {
+  content: '|';
+  animation: smooth-fade 1s infinite;
+  position: absolute;
+  font-family: monospace;
+  transform: translateX(-50%);
+}
+
+.hidden-input {
+  /* position: absolute; */
+  /* bottom: 0; */
+  opacity: 0;
+  margin: 0;
+  padding: 0;
+  width: 0px;
+  height: 0px;
+}
+
+@keyframes smooth-fade {
+  from {
+    opacity: 0.7;
+  }
+  50% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 0.7;
+  }
+}
