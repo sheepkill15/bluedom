@@ -180,7 +180,7 @@ const QuestSetup = ({
             <Form.Select
               onChange={(e) => handleSelectChanged(type, e.target.value)}
             >
-              <option>Default {type}</option>
+              <option value="{}">Default {type}</option>
               {getOptionUnlockablesOfType(i)}
             </Form.Select>
           </Form.Group>
